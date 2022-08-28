@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
 {
     Board m_gameBoard;
     Spawner m_spawner;
+    ScoreManager m_scoreManager;
 
     // currently active shape
     Shape m_activeShape;
@@ -26,6 +27,7 @@ public class GameController : MonoBehaviour
     public float m_keyRepeatRateDown = 0.05f;
 
     float m_timeToNextKeyRotate;
+    float m_dropIntervalModded;
 
     [Range(0.02f, 1f)]
     public float m_keyRepeatRateRotate = 0.25f;
@@ -52,6 +54,7 @@ public class GameController : MonoBehaviour
         m_gameBoard = GameObject.FindObjectOfType<Board>();
         m_spawner = GameObject.FindObjectOfType<Spawner>();
         m_soundManager = GameObject.FindObjectOfType<SoundManager>();
+        m_scoreManager = GameObject.FindObjectOfType<ScoreManager>();
 
         if (m_spawner)
         {
@@ -85,6 +88,10 @@ public class GameController : MonoBehaviour
         {
             Debug.LogWarning("WARNING! There is no sound manager defined.");
         }
+        if (!m_scoreManager)
+        {
+            Debug.LogWarning("WARNING! There is no score manager defined.");
+        }
 
         if (m_gameOverPanel)
         {
@@ -94,6 +101,8 @@ public class GameController : MonoBehaviour
         {
             m_pausePanel.SetActive(false);
         }
+
+        m_dropIntervalModded = m_dropInterval;
          
     }
 
@@ -142,9 +151,9 @@ public class GameController : MonoBehaviour
                 PlaySound(m_soundManager.m_moveSound, 0.5f);
             }
         }
-        else if ((Input.GetButton("MoveDown") && (Time.time > m_timeToNextKeyDown)) || (Time.time > m_timeToDrop))
+        else if  ((Input.GetButton("MoveDown") && (Time.time > m_timeToNextKeyDown)) || (Time.time > m_timeToDrop))
         {
-            m_timeToDrop = Time.time + m_dropInterval;
+            m_timeToDrop = Time.time + m_dropIntervalModded;
             m_timeToNextKeyDown = Time.time + m_keyRepeatRateDown;
             m_activeShape.MoveDown();
 
@@ -202,13 +211,25 @@ public class GameController : MonoBehaviour
         m_activeShape = m_spawner.SpawnShape();
 
         m_gameBoard.ClearAllRows();
+
+
+
         if(m_gameBoard.m_completedRows > 0)
         {
-            if(m_gameBoard.m_completedRows > 1)
+            m_scoreManager.ScoreLines(m_gameBoard.m_completedRows);
+            if (m_scoreManager.m_didLevelUp)
             {
-                AudioClip randomVocal = m_soundManager.GetRandomClip(m_soundManager.m_vocalClips);
-                PlaySound(randomVocal, 1f);
+                PlaySound(m_soundManager.m_levelUpVocalClip, 1f);
+                m_dropIntervalModded = Mathf.Clamp(m_dropInterval - (((float)m_scoreManager.m_level - 1) * 0.05f), 0.05f, 1f);
+            }
+            else
+            {
+                if (m_gameBoard.m_completedRows > 1)
+                {
+                    AudioClip randomVocal = m_soundManager.GetRandomClip(m_soundManager.m_vocalClips);
+                    PlaySound(randomVocal, 1f);
 
+                }
             }
             PlaySound(m_soundManager.m_clearRowRound, 0.5f);
         }
@@ -219,7 +240,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!m_gameBoard || !m_spawner || !m_activeShape || m_gameOver || !m_soundManager)
+        if (!m_gameBoard || !m_spawner || !m_activeShape || m_gameOver || !m_soundManager || !m_scoreManager)
         {
             return;
         }
