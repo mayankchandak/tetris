@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     Board m_gameBoard;
     Spawner m_spawner;
     ScoreManager m_scoreManager;
+    Ghost m_ghost;
 
     // currently active shape
     Shape m_activeShape;
@@ -55,6 +56,7 @@ public class GameController : MonoBehaviour
         m_spawner = GameObject.FindObjectOfType<Spawner>();
         m_soundManager = GameObject.FindObjectOfType<SoundManager>();
         m_scoreManager = GameObject.FindObjectOfType<ScoreManager>();
+        m_ghost = GameObject.FindObjectOfType<Ghost>();
 
         if (m_spawner)
         {
@@ -212,7 +214,7 @@ public class GameController : MonoBehaviour
 
         m_gameBoard.ClearAllRows();
 
-
+        if (m_ghost) m_ghost.Reset();
 
         if(m_gameBoard.m_completedRows > 0)
         {
@@ -281,5 +283,13 @@ public class GameController : MonoBehaviour
             Time.timeScale = m_isPaused ? 0 : 1;
         }
         
+    }
+
+    private void LateUpdate()
+    {
+        if (m_ghost)
+        {
+            m_ghost.DrawGhost(m_activeShape, m_gameBoard);
+        }
     }
 }
