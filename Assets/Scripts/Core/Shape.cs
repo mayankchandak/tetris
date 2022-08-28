@@ -20,7 +20,7 @@ public class Shape : MonoBehaviour
         Move(new Vector3(1, 0, 0));
     }
 
-    public void MoveTop()
+    public void MoveUp()
     {
         Move(new Vector3(0, 1, 0));
     }
