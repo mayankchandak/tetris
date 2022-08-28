@@ -38,6 +38,18 @@ public class Shape : MonoBehaviour
         }
     }
 
+    public void RotateClockwise(bool clockwise)
+    {
+        if (clockwise)
+        {
+            RotateRight();
+        }
+        else
+        {
+            RotateLeft();
+        }
+    }
+
     public void RotateLeft()
     {
         if(m_canRotate)

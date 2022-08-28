@@ -36,6 +36,12 @@ public class GameController : MonoBehaviour
 
     SoundManager m_soundManager;
 
+    public IconToggle m_rotIconToggle;
+    bool m_clockwise = true;
+
+    public bool m_isPaused = false;
+    public GameObject m_pausePanel;
+
     // Start is called before the first frame update
     void Start()
     { 
@@ -84,6 +90,10 @@ public class GameController : MonoBehaviour
         {
             m_gameOverPanel.SetActive(false);
         }
+        if (m_pausePanel)
+        {
+            m_pausePanel.SetActive(false);
+        }
          
     }
 
@@ -120,11 +130,11 @@ public class GameController : MonoBehaviour
         }
         else if (Input.GetButtonDown("Rotate") && Time.time > m_timeToNextKeyRotate)
         {
-            m_activeShape.RotateRight();
+            m_activeShape.RotateClockwise(m_clockwise);
             m_timeToNextKeyRotate = Time.time + m_keyRepeatRateRotate;
             if (!m_gameBoard.IsValidPosition(m_activeShape))
             { 
-                m_activeShape.RotateLeft();
+                m_activeShape.RotateClockwise(! m_clockwise);
                 PlaySound(m_soundManager.m_errorSound, 0.5f);
             }
             else
@@ -150,12 +160,20 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+        else if (Input.GetButtonDown("ToggleRot"))
+        {
+            ToggleRotDirection();
+        }
+        else if (Input.GetButtonDown("TogglePause"))
+        {
+            TogglePause();
+        }
 
     }
 
     private void PlaySound(AudioClip audioClip, float volMultiplier)
     {
-        if (m_soundManager.m_moveSound && m_soundManager.enabled)
+        if (audioClip && m_soundManager.enabled && m_soundManager.m_fxEnabled)
         {
             AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, Mathf.Clamp(m_soundManager.m_fxVolume * volMultiplier, 0.05f, 1f));
         }
@@ -212,6 +230,35 @@ public class GameController : MonoBehaviour
     public void Restart()
     {
         Debug.Log("Restarted");
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ToggleRotDirection()
+    {
+        m_clockwise = !m_clockwise;
+        if (m_rotIconToggle)
+        {
+            m_rotIconToggle.ToggleIcon(m_clockwise);
+        }
+    }
+
+    public void TogglePause()
+    {
+        if (m_gameOver)
+        {
+            return;
+        }
+        m_isPaused = !m_isPaused;
+        if (m_pausePanel)
+        {
+            m_pausePanel.SetActive(m_isPaused);
+            if (m_soundManager)
+            {
+                m_soundManager.m_musicSource.volume = m_isPaused ? m_soundManager.m_musicVolume * 0.25f : m_soundManager.m_musicVolume;
+            }
+            Time.timeScale = m_isPaused ? 0 : 1;
+        }
+        
     }
 }
