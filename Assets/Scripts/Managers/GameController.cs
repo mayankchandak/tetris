@@ -34,6 +34,8 @@ public class GameController : MonoBehaviour
 
     public GameObject m_gameOverPanel;
 
+    SoundManager m_soundManager;
+
     // Start is called before the first frame update
     void Start()
     { 
@@ -43,6 +45,7 @@ public class GameController : MonoBehaviour
 
         m_gameBoard = GameObject.FindObjectOfType<Board>();
         m_spawner = GameObject.FindObjectOfType<Spawner>();
+        m_soundManager = GameObject.FindObjectOfType<SoundManager>();
 
         if (m_spawner)
         {
@@ -72,10 +75,16 @@ public class GameController : MonoBehaviour
             }
         }
 
+        if (!m_soundManager)
+        {
+            Debug.LogWarning("WARNING! There is no sound manager defined.");
+        }
+
         if (m_gameOverPanel)
         {
             m_gameOverPanel.SetActive(false);
         }
+         
     }
 
     void PlayerInput()
@@ -84,9 +93,15 @@ public class GameController : MonoBehaviour
         {
             m_activeShape.MoveRight();
             m_timeToNextKeyLeftRight = Time.time + m_keyRepeatRateLeftRight;
+
             if (!m_gameBoard.IsValidPosition(m_activeShape))
             {
                 m_activeShape.MoveLeft();
+                PlaySound(m_soundManager.m_errorSound, 0.5f);
+            }
+            else
+            {
+                PlaySound(m_soundManager.m_moveSound, 0.5f);
             }
         }
         else if ((Input.GetButton("MoveLeft") && Time.time > m_timeToNextKeyLeftRight) || Input.GetButtonDown("MoveLeft"))
@@ -96,7 +111,12 @@ public class GameController : MonoBehaviour
             if (!m_gameBoard.IsValidPosition(m_activeShape))
             {
                 m_activeShape.MoveRight();
+                PlaySound(m_soundManager.m_errorSound, 0.5f);
             }
+            else
+            {
+                PlaySound(m_soundManager.m_moveSound, 0.5f);
+            } 
         }
         else if (Input.GetButtonDown("Rotate") && Time.time > m_timeToNextKeyRotate)
         {
@@ -105,6 +125,11 @@ public class GameController : MonoBehaviour
             if (!m_gameBoard.IsValidPosition(m_activeShape))
             { 
                 m_activeShape.RotateLeft();
+                PlaySound(m_soundManager.m_errorSound, 0.5f);
+            }
+            else
+            {
+                PlaySound(m_soundManager.m_moveSound, 0.5f);
             }
         }
         else if ((Input.GetButton("MoveDown") && (Time.time > m_timeToNextKeyDown)) || (Time.time > m_timeToDrop))
@@ -125,6 +150,15 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+
+    }
+
+    private void PlaySound(AudioClip audioClip, float volMultiplier)
+    {
+        if (m_soundManager.m_moveSound && m_soundManager.enabled)
+        {
+            AudioSource.PlayClipAtPoint(audioClip, Camera.main.transform.position, Mathf.Clamp(m_soundManager.m_fxVolume * volMultiplier, 0.05f, 1f));
+        }
     }
 
     private void GameOver()
@@ -134,6 +168,8 @@ public class GameController : MonoBehaviour
         if (m_gameOverPanel)
         {
             m_gameOverPanel.SetActive(true);
+            PlaySound(m_soundManager.m_gameOverSound, 5f);
+            PlaySound(m_soundManager.m_gameOverVocalClip, 1f);
         }
     }
 
@@ -148,12 +184,24 @@ public class GameController : MonoBehaviour
         m_activeShape = m_spawner.SpawnShape();
 
         m_gameBoard.ClearAllRows();
+        if(m_gameBoard.m_completedRows > 0)
+        {
+            if(m_gameBoard.m_completedRows > 1)
+            {
+                AudioClip randomVocal = m_soundManager.GetRandomClip(m_soundManager.m_vocalClips);
+                PlaySound(randomVocal, 1f);
+
+            }
+            PlaySound(m_soundManager.m_clearRowRound, 0.5f);
+        }
+
+        PlaySound(m_soundManager.m_dropSound, 0.75f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!m_gameBoard || !m_spawner || !m_activeShape || m_gameOver)
+        if (!m_gameBoard || !m_spawner || !m_activeShape || m_gameOver || !m_soundManager)
         {
             return;
         }
