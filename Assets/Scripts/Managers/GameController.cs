@@ -211,40 +211,46 @@ public class GameController : MonoBehaviour
 
     private void LandShape()
     {
-        m_timeToNextKeyDown = Time.time;
-        m_timeToNextKeyRotate = Time.time;
-        m_timeToNextKeyLeftRight = Time.time; 
-
-        m_activeShape.MoveUp();
-        m_gameBoard.StoreShapeInGrid(m_activeShape);
-        m_activeShape = m_spawner.SpawnShape();
-
-        m_gameBoard.StartCoroutine("ClearAllRows");
-
-        if (m_ghost) m_ghost.Reset();
-        if (m_holder) m_holder.m_canRelease = true;
-
-        if(m_gameBoard.m_completedRows > 0)
+        if (m_activeShape)
         {
-            m_scoreManager.ScoreLines(m_gameBoard.m_completedRows);
-            if (m_scoreManager.m_didLevelUp)
+            m_timeToNextKeyDown = Time.time;
+            m_timeToNextKeyRotate = Time.time;
+            m_timeToNextKeyLeftRight = Time.time;
+
+            m_activeShape.MoveUp();
+            m_activeShape.LandShapeFx();
+            m_gameBoard.StoreShapeInGrid(m_activeShape);
+
+            m_activeShape = m_spawner.SpawnShape();
+
+            m_gameBoard.StartCoroutine("ClearAllRows");
+
+            if (m_ghost) m_ghost.Reset();
+            if (m_holder) m_holder.m_canRelease = true;
+
+            if (m_gameBoard.m_completedRows > 0)
             {
-                PlaySound(m_soundManager.m_levelUpVocalClip, 1f);
-                m_dropIntervalModded = Mathf.Clamp(m_dropInterval - (((float)m_scoreManager.m_level - 1) * 0.05f), 0.05f, 1f);
-            }
-            else
-            {
-                if (m_gameBoard.m_completedRows > 1)
+                m_scoreManager.ScoreLines(m_gameBoard.m_completedRows);
+                if (m_scoreManager.m_didLevelUp)
                 {
-                    AudioClip randomVocal = m_soundManager.GetRandomClip(m_soundManager.m_vocalClips);
-                    PlaySound(randomVocal, 1f);
-
+                    PlaySound(m_soundManager.m_levelUpVocalClip, 1f);
+                    m_dropIntervalModded = Mathf.Clamp(m_dropInterval - (((float)m_scoreManager.m_level - 1) * 0.05f), 0.05f, 1f);
                 }
-            }
-            PlaySound(m_soundManager.m_clearRowRound, 0.5f);
-        }
+                else
+                {
+                    if (m_gameBoard.m_completedRows > 1)
+                    {
+                        AudioClip randomVocal = m_soundManager.GetRandomClip(m_soundManager.m_vocalClips);
+                        PlaySound(randomVocal, 1f);
 
-        PlaySound(m_soundManager.m_dropSound, 0.75f);
+                    }
+                }
+                PlaySound(m_soundManager.m_clearRowRound, 0.5f);
+            }
+
+            PlaySound(m_soundManager.m_dropSound, 0.75f);
+        }
+        
     }
 
     // Update is called once per frame

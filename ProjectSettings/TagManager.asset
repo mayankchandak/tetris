@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Board
   - Spawner
+  - LandShapeFx
   layers:
   - Default
   - TransparentFX
