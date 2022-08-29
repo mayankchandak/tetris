@@ -5,6 +5,10 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     public Shape[] m_allShapes;
+    public Transform[] m_queueXforms = new Transform[3];
+
+    Shape[] m_queuedShapes = new Shape[3];
+    float m_queueScale = 0.5f;
 
     Shape GetRandomShape()
     {
@@ -23,7 +27,10 @@ public class Spawner : MonoBehaviour
     public Shape SpawnShape()
     {
         Shape shape = null;
-        shape = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
+
+        shape = GetQueuedShape();
+        shape.transform.position = transform.position;
+        shape.transform.localScale = new Vector3(1, 1, 1);
         if (shape)
         {
             return shape;
@@ -35,15 +42,54 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void InitQueue()
     {
-        
+        for(int i = 0; i < m_queuedShapes.Length; i++)
+        {
+            m_queuedShapes[i] = null;
+        }
+        FillQueue();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FillQueue()
     {
-        
+        for(int i = 0; i < m_queuedShapes.Length; i++)
+        {
+            if (!m_queuedShapes[i])
+            {
+                m_queuedShapes[i] = Instantiate(GetRandomShape(), transform.position, Quaternion.identity) as Shape;
+                m_queuedShapes[i].transform.position = m_queueXforms[i].transform.position + m_queuedShapes[i].m_queueOffset;
+                m_queuedShapes[i].transform.localScale = new Vector3(m_queueScale, m_queueScale, m_queueScale);
+            }
+        }
     }
+
+    Shape GetQueuedShape()
+    {
+        Shape firstShape = null;
+
+        if (m_queuedShapes[0])
+        {
+            firstShape = m_queuedShapes[0];
+        }
+
+        for (int i = 1; i < m_queuedShapes.Length; i++)
+        {
+            m_queuedShapes[i - 1] = m_queuedShapes[i];
+            m_queuedShapes[i - 1].transform.position = m_queueXforms[i - 1].position + m_queuedShapes[i].m_queueOffset;
+
+        }
+
+        m_queuedShapes[m_queuedShapes.Length - 1] = null;
+
+        FillQueue();
+
+        return firstShape;
+    }
+
+    void Awake()
+    {
+        InitQueue();
+    }
+
 }

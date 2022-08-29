@@ -45,6 +45,8 @@ public class GameController : MonoBehaviour
     public bool m_isPaused = false;
     public GameObject m_pausePanel;
 
+    public Holder m_holder;
+
     // Start is called before the first frame update
     void Start()
     { 
@@ -57,6 +59,7 @@ public class GameController : MonoBehaviour
         m_soundManager = GameObject.FindObjectOfType<SoundManager>();
         m_scoreManager = GameObject.FindObjectOfType<ScoreManager>();
         m_ghost = GameObject.FindObjectOfType<Ghost>();
+        m_holder = GameObject.FindObjectOfType<Holder>();
 
         if (m_spawner)
         {
@@ -179,6 +182,10 @@ public class GameController : MonoBehaviour
         {
             TogglePause();
         }
+        else if (Input.GetButtonDown("Hold"))
+        {
+            Hold();
+        }
 
     }
 
@@ -211,10 +218,12 @@ public class GameController : MonoBehaviour
         m_activeShape.MoveUp();
         m_gameBoard.StoreShapeInGrid(m_activeShape);
         m_activeShape = m_spawner.SpawnShape();
+        
 
         m_gameBoard.ClearAllRows();
 
         if (m_ghost) m_ghost.Reset();
+        if (m_holder) m_holder.m_canRelease = true;
 
         if(m_gameBoard.m_completedRows > 0)
         {
@@ -290,6 +299,38 @@ public class GameController : MonoBehaviour
         if (m_ghost)
         {
             m_ghost.DrawGhost(m_activeShape, m_gameBoard);
+        }
+    }
+
+    public void Hold()
+    {
+        if (!m_holder)
+        {
+            return;
+        }
+        if (!m_holder.m_heldShape) {
+            m_holder.Catch(m_activeShape);
+            m_activeShape = m_spawner.SpawnShape();
+            PlaySound(m_soundManager.m_holdSound, 1f);
+        }
+        else if(m_holder.m_canRelease)
+        {
+            Shape temp = m_activeShape;
+            m_activeShape = m_holder.Release();
+            m_activeShape.transform.position = m_spawner.transform.position;
+            m_holder.Catch(temp);
+            PlaySound(m_soundManager.m_holdSound, 1f);
+        }
+        else
+        {
+            Debug.LogWarning("HOLDER Warning! Please wait for cool down!");
+            PlaySound(m_soundManager.m_errorSound, 1f);
+        }
+
+        
+        if (m_ghost)
+        {
+            m_ghost.Reset();
         }
     }
 }
