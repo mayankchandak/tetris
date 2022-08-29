@@ -218,9 +218,8 @@ public class GameController : MonoBehaviour
         m_activeShape.MoveUp();
         m_gameBoard.StoreShapeInGrid(m_activeShape);
         m_activeShape = m_spawner.SpawnShape();
-        
 
-        m_gameBoard.ClearAllRows();
+        m_gameBoard.StartCoroutine("ClearAllRows");
 
         if (m_ghost) m_ghost.Reset();
         if (m_holder) m_holder.m_canRelease = true;
