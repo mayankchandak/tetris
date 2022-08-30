@@ -46,6 +46,7 @@ public class GameController : MonoBehaviour
     public GameObject m_pausePanel;
 
     public Holder m_holder;
+    public ParticlePlayer m_gameOverFx;
 
     // Start is called before the first frame update
     void Start()
@@ -201,6 +202,19 @@ public class GameController : MonoBehaviour
     {
         m_activeShape.MoveUp();
         m_gameOver = true;
+
+
+        StartCoroutine("GameOverRoutine");
+    }
+
+    IEnumerator GameOverRoutine()
+    {
+        if (m_gameOverFx)
+        {
+            m_gameOverFx.Play();
+        }
+        yield return new WaitForSeconds(0.3f);
+
         if (m_gameOverPanel)
         {
             m_gameOverPanel.SetActive(true);

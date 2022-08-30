@@ -19,6 +19,8 @@ public class ScoreManager : MonoBehaviour
     public Text m_scoreText;
     public bool m_didLevelUp = false;
 
+    public ParticlePlayer m_levelUpFx;
+
     public void ScoreLines(int n)
     {
         m_didLevelUp = false;
@@ -82,6 +84,10 @@ public class ScoreManager : MonoBehaviour
 
     public void LevelUp()
     {
+        if (m_levelUpFx)
+        {
+            m_levelUpFx.Play();
+        }
         m_level++;
         m_didLevelUp = true;
         m_lines = m_linesPerLevel * m_level;
