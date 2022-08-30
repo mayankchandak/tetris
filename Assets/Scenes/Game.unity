@@ -904,7 +904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &213205072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4811,7 +4811,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 351910145073001946, guid: 625bd92b8cd8f4ae38a166409f1d0ce3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -280
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 351910145073001946, guid: 625bd92b8cd8f4ae38a166409f1d0ce3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5098,7 +5098,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 351910145073001946, guid: 625bd92b8cd8f4ae38a166409f1d0ce3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -140
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 351910145073001946, guid: 625bd92b8cd8f4ae38a166409f1d0ce3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5919,7 +5919,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 351910145073001946, guid: 625bd92b8cd8f4ae38a166409f1d0ce3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -140
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 351910145073001946, guid: 625bd92b8cd8f4ae38a166409f1d0ce3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7101,6 +7101,7 @@ MonoBehaviour:
   m_isPaused: 0
   m_pausePanel: {fileID: 329818664}
   m_holder: {fileID: 0}
+  m_gameOverFx: {fileID: 1279276674}
 --- !u!4 &1692473855
 Transform:
   m_ObjectHideFlags: 0

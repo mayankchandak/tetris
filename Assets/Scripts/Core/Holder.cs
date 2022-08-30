@@ -16,7 +16,6 @@ public class Holder : MonoBehaviour
             Debug.LogWarning("Holder warning! Release a shape before trying to hold!");
             return;
         }
-
         if (!shape)
         {
             Debug.LogWarning("Holder warning! Invalid shape.");
@@ -28,6 +27,7 @@ public class Holder : MonoBehaviour
             shape.transform.position = m_holderXform.position + shape.m_queueOffset;
             shape.transform.localScale = new Vector3(m_scale, m_scale, m_scale);
             m_heldShape = shape;
+            m_heldShape.transform.rotation = Quaternion.identity;
         }
         else
         {
