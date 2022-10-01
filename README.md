@@ -6,7 +6,7 @@ This is a clone of the original game [Tetris](https://en.wikipedia.org/wiki/Tetr
 
 __Sound__: Background music, sound effects, vocal effects, clear row sound      
 __Gameplay Features__: Rotation direction toggle button, Pause button   
-__UI Enhancements__: Ghost shape, Shape queue, Shape holder     
+__Gameplay Extras__: Ghost shape, Shape queue, Shape holder     
 __Particle effects__: Row glow effect, Land shape effect, Dynamic background        
 
 
