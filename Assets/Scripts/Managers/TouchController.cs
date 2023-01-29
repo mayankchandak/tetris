@@ -24,8 +24,8 @@ public class TouchController : MonoBehaviour
     [Range(50, 150)]
     public int m_minDragDistance = 100;
 
-    [Range(50,250)]
-    public int m_minSwipeDistance = 200;
+    [Range(20,250)]
+    public int m_minSwipeDistance = 50;
 
 
     void OnTap()
