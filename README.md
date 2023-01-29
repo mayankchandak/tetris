@@ -28,3 +28,5 @@ Load the `Game` scene available under `Assets/Scenes/Game`.
 __To play the game__
 Additionally, this game is also available on [Itch](https://chandak.itch.io/tetris) to play online (WebGL) or to download for MacOS and Windows.
 
+## Credits ##
+This project was done as a part of the course [Make a Tetris-style Puzzler in Unity](https://www.udemy.com/course/make-a-tetris-style-puzzler-in-unity/) by [Wilmer Lin](https://www.udemy.com/user/wilmerlin2/) on Udemy. You can view the course certificate [here](http://ude.my/UC-c6e416ee-2e74-4a12-9172-32fe6efc9ffe).
